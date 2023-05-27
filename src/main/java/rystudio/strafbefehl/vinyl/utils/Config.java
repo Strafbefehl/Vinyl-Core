@@ -1,8 +1,6 @@
 package rystudio.strafbefehl.vinyl.utils;
 
-import java.awt.*;
 import java.io.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +25,6 @@ public class Config {
             return;
         }
         PrintWriter bufferedWriter = new PrintWriter(new FileWriter(this.file));
-        bufferedWriter.println("# IF YOU DON'T WANT TO USE A FEATURE JUST LEAVE THE CONFIG LINES VALUE **EMPTY OR REMOVE** THEM AND THEY WILL GET IGNORED.");
         bufferedWriter.println(ConfigSettings.TOKEN.label);
         bufferedWriter.println("# Database Settings");
         bufferedWriter.println(ConfigSettings.USE_MYSQL.label);
@@ -36,19 +33,13 @@ public class Config {
         bufferedWriter.println(ConfigSettings.DB_NAME.label);
         bufferedWriter.println(ConfigSettings.DB_USER.label);
         bufferedWriter.println(ConfigSettings.DB_PASSWORD.label);
-        bufferedWriter.println("# EasyCommands Settings");
-        bufferedWriter.println(ConfigSettings.USE_MUSIC_BOT.label);
+        bufferedWriter.println("# Core Settings");
         bufferedWriter.println(ConfigSettings.USE_PREFIXCOMMANDS.label);
-        bufferedWriter.println("# On join auto roles. (leave empty if not used)");
-        bufferedWriter.println(ConfigSettings.MEMBER_ROLE_ID.label);
-        bufferedWriter.println(ConfigSettings.BOT_ROLE_ID.label);
         bufferedWriter.println("# Enables log to channel feature.");
         bufferedWriter.println(ConfigSettings.LOG_CHANNEL_ID.label);
-        bufferedWriter.println("# Music bot config.");
-        bufferedWriter.println(ConfigSettings.MUSIC_EMBED_COLOR.label + "255:255:255");
         bufferedWriter.flush();
         bufferedWriter.close();
-        Logger.log(LogType.WARNING, "Launch stopped! Config file was not found so I created one. You can now configure the new created 'config.ini' file. | See https://github.com/FrostedCA/EasyCommands/blob/master/src/main/java/ca/tristan/easycommands/utils/Config.java for more settings.");
+        Logger.log(LogType.WARNING, "Launch stopped! Config file was not found so I created one. You can now configure the new created 'config.ini' file.");
     }
 
     public void loadConfig() throws IOException {
@@ -120,10 +111,6 @@ public class Config {
         return settingsValues.get(ConfigSettings.DB_PASSWORD);
     }
 
-    public boolean getUseMusicBot() {
-        return Boolean.parseBoolean(settingsValues.get(ConfigSettings.USE_MUSIC_BOT).isBlank() ? "false" : settingsValues.get(ConfigSettings.USE_MUSIC_BOT));
-    }
-
     public boolean getUsePrefixCommands() {
         return Boolean.parseBoolean(settingsValues.get(ConfigSettings.USE_PREFIXCOMMANDS).isBlank() ? "false" : settingsValues.get(ConfigSettings.USE_PREFIXCOMMANDS));
     }
@@ -151,17 +138,5 @@ public class Config {
         }
 
         return id;
-    }
-
-    public Color getMusicEmbedColor() {
-        Color out = null;
-        String[] rgbStrings = settingsValues.get(ConfigSettings.MUSIC_EMBED_COLOR).split(":");
-        int r = Integer.parseInt(rgbStrings[0]);
-        int g = Integer.parseInt(rgbStrings[1]);
-        int b = Integer.parseInt(rgbStrings[2]);
-        int rgbCode = r * g * b;
-        out = new Color(rgbCode);
-        System.out.println(Arrays.toString(rgbStrings));
-        return out;
     }
 }

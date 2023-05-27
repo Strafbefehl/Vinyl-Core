@@ -22,7 +22,7 @@ public class ReloadConfigCmd extends SlashExecutor {
 
     @Override
     public String getDescription() {
-        return "Reloads the EasyCommands config.";
+        return "Reloads the Core config.";
     }
 
     @Override

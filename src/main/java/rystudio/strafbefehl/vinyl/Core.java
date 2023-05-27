@@ -122,7 +122,7 @@ public class Core {
 
         updateCommands();
         logCurrentExecutors();
-        Logger.log(LogType.OK, "EasyCommands finished loading in " + ConsoleColors.GREEN_BOLD + (System.currentTimeMillis() - millisStart) + "ms" + ConsoleColors.GREEN + ".");
+        Logger.log(LogType.OK, "Core (RyStudio) finished loading in " + ConsoleColors.GREEN_BOLD + (System.currentTimeMillis() - millisStart) + "ms" + ConsoleColors.GREEN + ".");
         return jda;
     }
 
@@ -165,7 +165,7 @@ public class Core {
     }
 
     /**
-     * Connects a MySQL database to EasyCommands.
+     * Connects a MySQL database to Core.
      */
     private void mysqlInit() throws SQLException {
         mySQL = new MySQL(this.config.getDB_Host(), this.config.getDB_Port(), this.config.getDB_Database(), this.config.getDB_User(), this.config.getDB_Password());
@@ -294,10 +294,6 @@ public class Core {
 
     public Map<Guild, Channel> getGuildsMusicChannel() {
         return guildsMusicChannel;
-    }
-
-    private void enableMusicBot() {
-        Logger.log(LogType.OK, "EasyCommands MusicBot has been enabled successfully.");
     }
 
     public static Config getConfig() {
