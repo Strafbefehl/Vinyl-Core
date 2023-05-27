@@ -1,6 +1,4 @@
-package rystudio.strafbefehl.core.utils;
-
-import com.mysql.cj.log.Log;
+package rystudio.strafbefehl.vinyl.utils;
 
 import java.awt.*;
 import java.io.*;

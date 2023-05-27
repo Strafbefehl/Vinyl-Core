@@ -1,4 +1,4 @@
-package rystudio.strafbefehl.core.commands;
+package rystudio.strafbefehl.vinyl.commands;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Role;

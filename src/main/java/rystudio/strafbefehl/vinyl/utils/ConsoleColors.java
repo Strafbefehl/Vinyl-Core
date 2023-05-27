@@ -1,4 +1,4 @@
-package rystudio.strafbefehl.core.utils;
+package rystudio.strafbefehl.vinyl.utils;
 
 public class ConsoleColors {
     // Reset

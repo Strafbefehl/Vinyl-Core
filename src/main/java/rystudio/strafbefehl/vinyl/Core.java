@@ -1,4 +1,4 @@
-package rystudio.strafbefehl.core;
+package rystudio.strafbefehl.vinyl;
 
 
 import net.dv8tion.jda.api.JDA;
@@ -13,16 +13,16 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import rystudio.strafbefehl.core.commands.IExecutor;
-import rystudio.strafbefehl.core.commands.prefix.PrefixCommands;
-import rystudio.strafbefehl.core.commands.prefix.PrefixExecutor;
-import rystudio.strafbefehl.core.commands.slash.SlashCommands;
-import rystudio.strafbefehl.core.commands.slash.SlashExecutor;
-import rystudio.strafbefehl.core.database.MySQL;
-import rystudio.strafbefehl.core.utils.Config;
-import rystudio.strafbefehl.core.utils.ConsoleColors;
-import rystudio.strafbefehl.core.utils.LogType;
-import rystudio.strafbefehl.core.utils.Logger;
+import rystudio.strafbefehl.vinyl.commands.IExecutor;
+import rystudio.strafbefehl.vinyl.commands.prefix.PrefixCommands;
+import rystudio.strafbefehl.vinyl.commands.prefix.PrefixExecutor;
+import rystudio.strafbefehl.vinyl.commands.slash.SlashCommands;
+import rystudio.strafbefehl.vinyl.commands.slash.SlashExecutor;
+import rystudio.strafbefehl.vinyl.database.MySQL;
+import rystudio.strafbefehl.vinyl.utils.Config;
+import rystudio.strafbefehl.vinyl.utils.ConsoleColors;
+import rystudio.strafbefehl.vinyl.utils.LogType;
+import rystudio.strafbefehl.vinyl.utils.Logger;
 
 import java.io.IOException;
 import java.sql.*;

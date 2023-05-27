@@ -1,8 +1,8 @@
-package rystudio.strafbefehl.core.utils;
+package rystudio.strafbefehl.vinyl.utils;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import rystudio.strafbefehl.core.Core;
+import rystudio.strafbefehl.vinyl.Core;
 
 import java.util.Calendar;
 

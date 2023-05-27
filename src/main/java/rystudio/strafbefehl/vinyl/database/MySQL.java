@@ -1,4 +1,4 @@
-package rystudio.strafbefehl.core.database;
+package rystudio.strafbefehl.vinyl.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

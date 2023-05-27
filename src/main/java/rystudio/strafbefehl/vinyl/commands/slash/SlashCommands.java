@@ -1,13 +1,12 @@
-package rystudio.strafbefehl.core.commands.slash;
+package rystudio.strafbefehl.vinyl.commands.slash;
 
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import rystudio.strafbefehl.core.Core;
-import rystudio.strafbefehl.core.commands.EventData;
-import rystudio.strafbefehl.core.commands.slash.SlashExecutor;
-import rystudio.strafbefehl.core.utils.LogType;
+import rystudio.strafbefehl.vinyl.Core;
+import rystudio.strafbefehl.vinyl.commands.EventData;
+import rystudio.strafbefehl.vinyl.utils.LogType;
 
 import java.util.Objects;
 

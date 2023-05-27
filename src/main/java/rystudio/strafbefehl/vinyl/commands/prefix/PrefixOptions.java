@@ -1,4 +1,4 @@
-package rystudio.strafbefehl.core.commands.prefix;
+package rystudio.strafbefehl.vinyl.commands.prefix;
 
 
 public class PrefixOptions {

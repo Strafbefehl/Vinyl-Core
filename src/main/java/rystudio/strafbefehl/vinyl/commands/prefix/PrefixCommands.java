@@ -1,11 +1,11 @@
-package rystudio.strafbefehl.core.commands.prefix;
+package rystudio.strafbefehl.vinyl.commands.prefix;
 
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import rystudio.strafbefehl.core.Core;
-import rystudio.strafbefehl.core.utils.LogType;
+import rystudio.strafbefehl.vinyl.Core;
+import rystudio.strafbefehl.vinyl.utils.LogType;
 
 import java.util.Objects;
 

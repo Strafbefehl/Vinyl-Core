@@ -1,4 +1,4 @@
-package rystudio.strafbefehl.core.commands;
+package rystudio.strafbefehl.vinyl.commands;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
@@ -11,8 +11,6 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
-
-import java.sql.Connection;
 
 public class EventData {
 

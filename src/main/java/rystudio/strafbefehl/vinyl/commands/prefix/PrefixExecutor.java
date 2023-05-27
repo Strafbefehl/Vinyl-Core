@@ -1,21 +1,18 @@
-package rystudio.strafbefehl.core.commands.slash;
-
+package rystudio.strafbefehl.vinyl.commands.prefix;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.Channel;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import rystudio.strafbefehl.core.commands.EventData;
-import rystudio.strafbefehl.core.commands.IExecutor;
-import rystudio.strafbefehl.core.database.MySQL;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import rystudio.strafbefehl.vinyl.commands.IExecutor;
+import rystudio.strafbefehl.vinyl.database.MySQL;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SlashExecutor implements IExecutor {
+public abstract class PrefixExecutor implements IExecutor {
 
-    public List<OptionData> options = new ArrayList<>();
+    public List<PrefixOptions> options = new ArrayList<>();
 
     @Override
     public String getName() {
@@ -32,13 +29,13 @@ public abstract class SlashExecutor implements IExecutor {
         return null;
     }
 
+    public List<PrefixOptions> getOptions() {
+        return options;
+    }
+
     @Override
     public boolean isOwnerOnly() {
         return false;
-    }
-
-    public List<OptionData> getOptions() {
-        return options;
     }
 
     @Override
@@ -51,8 +48,6 @@ public abstract class SlashExecutor implements IExecutor {
         return new ArrayList<>();
     }
 
-    public void execute(EventData event, MySQL mySQL) {
-
-    }
+    public void execute(MessageReceivedEvent event, MySQL mySQL) { }
 
 }

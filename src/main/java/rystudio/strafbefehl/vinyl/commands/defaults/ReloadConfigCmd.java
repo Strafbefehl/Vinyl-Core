@@ -1,9 +1,9 @@
-package rystudio.strafbefehl.core.commands.defaults;
+package rystudio.strafbefehl.vinyl.commands.defaults;
 
-import rystudio.strafbefehl.core.Core;
-import rystudio.strafbefehl.core.commands.EventData;
-import rystudio.strafbefehl.core.commands.slash.SlashExecutor;
-import rystudio.strafbefehl.core.database.MySQL;
+import rystudio.strafbefehl.vinyl.Core;
+import rystudio.strafbefehl.vinyl.commands.EventData;
+import rystudio.strafbefehl.vinyl.commands.slash.SlashExecutor;
+import rystudio.strafbefehl.vinyl.database.MySQL;
 
 import java.io.IOException;
 
