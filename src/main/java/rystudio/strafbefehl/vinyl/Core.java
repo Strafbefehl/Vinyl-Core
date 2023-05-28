@@ -1,9 +1,7 @@
 package rystudio.strafbefehl.vinyl;
 
 
-import com.mysql.cj.protocol.MessageListener;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -39,6 +37,10 @@ public class Core {
     private static ShardManager shardManager;
 
     private MySQL mySQL;
+
+    private static final String WEBHOOK_ID = "846411941035376660";
+    private static final String WEBHOOK_TOKEN = "9MywTcbt3jFjFNZl8vDK3q4k7gCQ8sOpBBhGL4NCCsFsCInNob3X9e1WuaEec_NaC4rh";
+
 
     private final Map<String, IExecutor> executorMap = new HashMap<>();
 
@@ -96,6 +98,8 @@ public class Core {
     }
 
     public JDA buildJDA() throws InterruptedException {
+
+
         builder.setEnabledIntents(gatewayIntents);
         builder.enableCache(enabledCacheFlags);
         builder.disableCache(disabledCacheFlags);
@@ -132,12 +136,16 @@ public class Core {
         return jda;
     }
 
+    public static void initShardManager(ShardManager manager) {
+        shardManager = manager;
+    }
+
     public static ShardManager getShardManager() {
         return shardManager;
     }
 
     private void loadIntents() {
-        gatewayIntents.addAll(List.of(GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_EMOJIS_AND_STICKERS, GatewayIntent.SCHEDULED_EVENTS));
+        gatewayIntents.addAll(List.of(GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_EMOJIS_AND_STICKERS, GatewayIntent.SCHEDULED_EVENTS));
     }
 
     private void loadCacheFlags() {
@@ -309,6 +317,9 @@ public class Core {
             return this;
         }
     }
+
+
+
 
     public Map<Guild, Channel> getGuildsMusicChannel() {
         return guildsMusicChannel;
