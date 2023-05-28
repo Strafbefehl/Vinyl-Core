@@ -39,8 +39,8 @@ public abstract class PrefixExecutor implements IExecutor {
     }
 
     @Override
-    public List<Channel> getAuthorizedChannels(JDA jda) {
-        return new ArrayList<>();
+    public boolean isBotOwner() {
+        return false;
     }
 
     @Override

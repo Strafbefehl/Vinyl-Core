@@ -16,7 +16,9 @@ public interface IExecutor {
 
     boolean isOwnerOnly();
 
-    List<Channel> getAuthorizedChannels(JDA jda);
+    boolean isDJOnly();
+
+    boolean isBotOwner();
 
     List<Role> getAuthorizedRoles(JDA jda);
 

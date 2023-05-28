@@ -50,10 +50,6 @@ public class PrefixCommands extends ListenerAdapter {
             }
 
             core.getLogger().logBoth(LogType.PREFIXCMD, "'" + cmdName + "' has been triggered.", event.getMember());
-            if(!executor.getAuthorizedChannels(core.jda).isEmpty() && !executor.getAuthorizedChannels(core.jda).contains(event.getChannel())) {
-                core.getLogger().logBoth(LogType.WARNING, "PrefixCommand: '" + cmdName + "' has been triggered but the channel it was executed in isn't authorized.", event.getMember());
-                return;
-            }
 
             if(executor.getAuthorizedRoles(core.jda) != null && !executor.getAuthorizedRoles(core.jda).isEmpty()) {
                 for (Role authorizedRole : executor.getAuthorizedRoles(core.jda)) {

@@ -31,6 +31,11 @@ public class ReloadConfigCmd extends SlashExecutor {
     }
 
     @Override
+    public boolean isDJOnly() {
+        return false;
+    }
+
+    @Override
     public void execute(EventData data, MySQL mySQL) {
         try {
             this.core.getConfig().loadConfig();

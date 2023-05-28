@@ -36,13 +36,13 @@ public abstract class SlashExecutor implements IExecutor {
         return false;
     }
 
-    public List<OptionData> getOptions() {
-        return options;
+    @Override
+    public boolean isBotOwner() {
+        return false;
     }
 
-    @Override
-    public List<Channel> getAuthorizedChannels(JDA jda) {
-        return new ArrayList<>();
+    public List<OptionData> getOptions() {
+        return options;
     }
 
     @Override
