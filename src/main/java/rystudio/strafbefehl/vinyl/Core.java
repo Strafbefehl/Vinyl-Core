@@ -1,6 +1,7 @@
 package rystudio.strafbefehl.vinyl;
 
 
+import com.mysql.cj.protocol.MessageListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -12,6 +13,8 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import rystudio.strafbefehl.vinyl.commands.IExecutor;
 import rystudio.strafbefehl.vinyl.commands.prefix.PrefixCommands;
@@ -32,10 +35,11 @@ public class Core {
 
     public JDA jda;
 
-    private final JDABuilder jdaBuilder;
+    private DefaultShardManagerBuilder builder;
+    private static ShardManager shardManager;
 
     private MySQL mySQL;
-    
+
     private final Map<String, IExecutor> executorMap = new HashMap<>();
 
     private final List<GatewayIntent> gatewayIntents = new ArrayList<>();
@@ -55,10 +59,10 @@ public class Core {
 
     private Logger logger;
 
-    public Core() throws IOException {
+    public Core(DefaultShardManagerBuilder builder) throws IOException {
         config = new Config();
         this.logger = new Logger(this);
-
+        this.builder = builder;
         loadIntents();
 
         this.slashCommands = new SlashCommands(this);
@@ -68,12 +72,13 @@ public class Core {
             getGatewayIntents().add(GatewayIntent.MESSAGE_CONTENT);
         }
 
-        jdaBuilder = JDABuilder.create(this.config.getToken(), gatewayIntents);
-        jdaBuilder.addEventListeners(slashCommands);
+        builder = DefaultShardManagerBuilder.create(this.config.getToken(), gatewayIntents);
+        builder.addEventListeners(slashCommands);
     }
 
     @Deprecated
-    public Core(String token, boolean usePrefixCommands) throws IOException {
+    public Core(String token, boolean usePrefixCommands, DefaultShardManagerBuilder builder) throws IOException {
+        this.builder = builder;
 
         millisStart = System.currentTimeMillis();
 
@@ -86,17 +91,17 @@ public class Core {
             getGatewayIntents().add(GatewayIntent.MESSAGE_CONTENT);
         }
 
-        jdaBuilder = JDABuilder.create(token, gatewayIntents);
-        jdaBuilder.addEventListeners(slashCommands);
+        builder = DefaultShardManagerBuilder.create(token, gatewayIntents);
+        builder.addEventListeners(slashCommands);
     }
 
     public JDA buildJDA() throws InterruptedException {
+        builder.setEnabledIntents(gatewayIntents);
+        builder.enableCache(enabledCacheFlags);
+        builder.disableCache(disabledCacheFlags);
 
-        jdaBuilder.setEnabledIntents(gatewayIntents);
-        jdaBuilder.enableCache(enabledCacheFlags);
-        jdaBuilder.disableCache(disabledCacheFlags);
-
-        this.jda = jdaBuilder.build().awaitReady();
+        shardManager = builder.build(); // Build the ShardManager instance
+        jda = shardManager.getShardById(0); // Assign the JDA instance
 
         millisStart = System.currentTimeMillis();
 
@@ -119,6 +124,7 @@ public class Core {
 
         logChannel = !this.config.getLogChannelID().isBlank() ? this.jda.getTextChannelById(this.config.getLogChannelID()) : null;
 
+        this.jda.addEventListener(slashCommands);
 
         updateCommands();
         logCurrentExecutors();
@@ -126,8 +132,12 @@ public class Core {
         return jda;
     }
 
+    public static ShardManager getShardManager() {
+        return shardManager;
+    }
+
     private void loadIntents() {
-        gatewayIntents.addAll(List.of(GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS));
+        gatewayIntents.addAll(List.of(GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_EMOJIS_AND_STICKERS, GatewayIntent.SCHEDULED_EVENTS));
     }
 
     private void loadCacheFlags() {
@@ -280,16 +290,24 @@ public class Core {
     }
 
     public Core registerListeners(ListenerAdapter... listeners) {
+        if (List.of(listeners).isEmpty()) {
+            return this;
+        } else {
+            if (this.builder == null) {
+                this.builder = DefaultShardManagerBuilder.createDefault(config.getToken());
+                // Configure any other settings for the builder if needed
+            }
 
-        if(List.of(listeners).isEmpty()) {
+            ListenerAdapter[] var2 = listeners;
+            int var3 = listeners.length;
+
+            for (int var4 = 0; var4 < var3; ++var4) {
+                ListenerAdapter listener = var2[var4];
+                this.builder.addEventListeners(listener);
+            }
+
             return this;
         }
-
-        for (Object listener : listeners) {
-            jdaBuilder.addEventListeners(listener);
-        }
-
-        return this;
     }
 
     public Map<Guild, Channel> getGuildsMusicChannel() {
