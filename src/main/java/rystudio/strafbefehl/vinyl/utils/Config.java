@@ -26,6 +26,7 @@ public class Config {
         }
         PrintWriter bufferedWriter = new PrintWriter(new FileWriter(this.file));
         bufferedWriter.println(ConfigSettings.TOKEN.label);
+        bufferedWriter.println(ConfigSettings.BOTID.label);
         bufferedWriter.println("# Database Settings");
         bufferedWriter.println(ConfigSettings.USE_MYSQL.label);
         bufferedWriter.println(ConfigSettings.DB_HOST.label);
@@ -57,6 +58,7 @@ public class Config {
                             System.exit(1);
                         }
                         break;
+                    case BOTID:
                     case USE_MYSQL:
                     case DB_HOST:
                     case DB_PORT:
@@ -73,6 +75,11 @@ public class Config {
     public String getToken() {
         return settingsValues.get(ConfigSettings.TOKEN);
     }
+
+    public String getBotID() {
+        return settingsValues.get(ConfigSettings.BOTID);
+    }
+
 
     public boolean getUseMysql() {
         return Boolean.parseBoolean(settingsValues.get(ConfigSettings.USE_MYSQL).isBlank() ? "false" : settingsValues.get(ConfigSettings.USE_MYSQL));
