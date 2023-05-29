@@ -36,7 +36,6 @@ public class Config {
         bufferedWriter.println("# Core Settings");
         bufferedWriter.println(ConfigSettings.USE_PREFIXCOMMANDS.label);
         bufferedWriter.println("# Enables log to channel feature.");
-        bufferedWriter.println(ConfigSettings.LOG_CHANNEL_ID.label);
         bufferedWriter.flush();
         bufferedWriter.close();
         Logger.log(LogType.WARNING, "Launch stopped! Config file was not found so I created one. You can now configure the new created 'config.ini' file.");
@@ -64,12 +63,7 @@ public class Config {
                     case DB_NAME:
                     case DB_USER:
                     case DB_PASSWORD:
-                    case USE_MUSIC_BOT:
                     case USE_PREFIXCOMMANDS:
-                    case MEMBER_ROLE_ID:
-                    case BOT_ROLE_ID:
-                    case LOG_CHANNEL_ID:
-                    case MUSIC_EMBED_COLOR:
                 }
             }
         }
@@ -115,28 +109,4 @@ public class Config {
         return Boolean.parseBoolean(settingsValues.get(ConfigSettings.USE_PREFIXCOMMANDS).isBlank() ? "false" : settingsValues.get(ConfigSettings.USE_PREFIXCOMMANDS));
     }
 
-    public String getMemberRoleID() {
-        String id = settingsValues.get(ConfigSettings.MEMBER_ROLE_ID);
-        if(id.isBlank()) {
-            Logger.log(LogType.WARNING, "No auto Member Role ID in the config was detected. Ignore if disable.");
-        }
-        return id;
-    }
-
-    public String getBotRoleID() {
-        String id = settingsValues.get(ConfigSettings.BOT_ROLE_ID);
-        if(id.isBlank()) {
-            Logger.log(LogType.WARNING, "No auto Bot Role ID in the config was detected. Ignore if disable.");
-        }
-        return id;
-    }
-
-    public String getLogChannelID() {
-        String id = settingsValues.get(ConfigSettings.LOG_CHANNEL_ID);
-        if(id.isBlank()) {
-            Logger.log(LogType.WARNING, "No log channel ID in the config was detected. Ignore if normal, note: You will only receive logs in bot console.");
-        }
-
-        return id;
-    }
 }

@@ -123,11 +123,6 @@ public class Core {
             this.jda.addEventListener(prefixCommands);
         }
 
-        Role memberRole = !this.config.getMemberRoleID().isBlank() ? this.jda.getRoleById(this.config.getMemberRoleID()) : null;
-        Role botRole = !this.config.getBotRoleID().isBlank() ? this.jda.getRoleById(this.config.getBotRoleID()) : null;
-
-        logChannel = !this.config.getLogChannelID().isBlank() ? this.jda.getTextChannelById(this.config.getLogChannelID()) : null;
-
         this.jda.addEventListener(slashCommands);
 
         updateCommands();

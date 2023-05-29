@@ -9,12 +9,7 @@ public enum ConfigSettings {
     DB_NAME("db_name="),
     DB_USER("db_user="),
     DB_PASSWORD("db_password="),
-    USE_MUSIC_BOT("use_music_bot="),
     USE_PREFIXCOMMANDS("use_prefixcommands="),
-    MEMBER_ROLE_ID("member_role_id="),
-    BOT_ROLE_ID("bot_role_id="),
-    LOG_CHANNEL_ID("log_channel_id="),
-    MUSIC_EMBED_COLOR("music_embed_color="),
     ;
 
     public final String label;
