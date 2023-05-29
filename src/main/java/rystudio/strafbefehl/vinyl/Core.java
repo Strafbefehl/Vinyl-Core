@@ -2,10 +2,13 @@ package rystudio.strafbefehl.vinyl;
 
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -14,6 +17,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.discordbots.api.client.DiscordBotListAPI;
 import rystudio.strafbefehl.vinyl.commands.IExecutor;
 import rystudio.strafbefehl.vinyl.commands.prefix.PrefixCommands;
 import rystudio.strafbefehl.vinyl.commands.prefix.PrefixExecutor;
@@ -25,11 +29,16 @@ import rystudio.strafbefehl.vinyl.utils.ConsoleColors;
 import rystudio.strafbefehl.vinyl.utils.LogType;
 import rystudio.strafbefehl.vinyl.utils.Logger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.*;
 import java.util.*;
 
-public class Core {
+public class Core extends ListenerAdapter{
 
     public JDA jda;
 
@@ -128,8 +137,97 @@ public class Core {
         updateCommands();
         logCurrentExecutors();
         Logger.log(LogType.OK, "Core (RyStudio) finished loading in " + ConsoleColors.GREEN_BOLD + (System.currentTimeMillis() - millisStart) + "ms" + ConsoleColors.GREEN + ".");
+
+        updateStats();
+        int shardId = jda.getShardInfo().getShardId();
+        jda.awaitReady().getPresence().setActivity(Activity.listening("Shard: " + String.valueOf(shardId)));
+
         return jda;
     }
+
+
+    private void updateStats() {
+         DiscordBotListAPI api = new DiscordBotListAPI.Builder().token(Core.getConfig().getToken()).botId(Core.getConfig().getBotID()).build();
+
+        try {
+            //Top.gg
+            int guildsShards = 0;
+
+
+            ShardManager shardManager = jda.getShardManager();
+            for (JDA shard : shardManager.getShardCache()) {
+                guildsShards += shard.getGuilds().size();
+            }
+
+
+            api.setStats(guildsShards);
+            Logger.log(LogType.OK, "Updated bot stats on top.gg");
+        } catch (Exception e) {
+            Logger.log(LogType.ERROR, "Error while updating bot stats on top.gg: " + e.getMessage());
+        }
+
+
+        try {
+            int guildsShards = 0;
+
+
+            ShardManager shardManager = jda.getShardManager();
+            for (JDA shard : shardManager.getShardCache()) {
+                guildsShards += shard.getGuilds().size();
+            }
+
+            String token = "VOID_V3imKsNSyhsDEWoJJTTgRFKL5cYPtrQlWO6aYLuMUTtjdIkG";
+            String botId = Core.getConfig().getBotID();
+
+            String url = "https://api.voidbots.net/bot/stats/" + botId;
+            String jsonData = "{\"server_count\": " + guildsShards + ", \"shard_count\": " + shardManager.getShardsTotal() + "}";
+
+            URL apiUrl = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", token);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            OutputStream outputStream = connection.getOutputStream();
+            outputStream.write(jsonData.getBytes());
+            outputStream.flush();
+            outputStream.close();
+
+            BufferedReader responseReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = responseReader.readLine()) != null) {
+                response.append(line);
+            }
+            responseReader.close();
+
+            Logger.log(LogType.OK, "Updated bot stats on VoidBots");
+
+            connection.disconnect();
+        } catch (IOException e) {
+            Logger.log(LogType.ERROR, "Error while updating bot stats on VoidBots: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onGuildJoin(GuildJoinEvent event) {
+        try {
+            updateStats();
+        } catch (Exception e) {
+            Logger.log(LogType.ERROR, "Error while updating bot stats onGuildJoin: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onGuildLeave(GuildLeaveEvent event) {
+        try {
+            updateStats();
+        } catch (Exception e) {
+            Logger.log(LogType.ERROR, "Error while updating bot stats onGuildLeave: " + e.getMessage());
+        }
+    }
+
 
     public static void initShardManager(ShardManager manager) {
         shardManager = manager;

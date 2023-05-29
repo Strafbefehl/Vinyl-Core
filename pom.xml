@@ -6,7 +6,7 @@
 
     <groupId>rystudio.strafbefehl.vinyl</groupId>
     <artifactId>core</artifactId>
-    <version>1.0.2-RELEASE</version>
+    <version>1.0.4-RELEASE</version>
     <packaging>jar</packaging>
     <name>Vinyl-Core</name>
 
@@ -51,6 +51,11 @@
             <groupId>com.github.LowLevelSubmarine</groupId>
             <artifactId>GeniusLyricsAPI</artifactId>
             <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.discordbots</groupId>
+            <artifactId>DBL-Java-Library</artifactId>
+            <version>2.1.2</version>
         </dependency>
     </dependencies>
 
