@@ -42,8 +42,9 @@ public class Core extends ListenerAdapter{
 
     public JDA jda;
 
+    private boolean running;
     private DefaultShardManagerBuilder builder;
-    private static ShardManager shardManager;
+    private ShardManager shardManager;
 
     private MySQL mySQL;
 
@@ -64,7 +65,7 @@ public class Core extends ListenerAdapter{
 
     private Long millisStart;
 
-    private static Config config;
+    private Config config;
 
     private TextChannel logChannel;
 
@@ -107,7 +108,9 @@ public class Core extends ListenerAdapter{
     }
 
     public JDA buildJDA() throws InterruptedException {
-
+        if (running && shardManager != null) {
+            stopBot();
+        }
 
         builder.setEnabledIntents(gatewayIntents);
         builder.enableCache(enabledCacheFlags);
@@ -145,9 +148,16 @@ public class Core extends ListenerAdapter{
         return jda;
     }
 
+    public void stopBot() {
+        if (!running || shardManager == null) { return; }
+        shardManager.shutdown();
+        running = false;
+        shardManager = null;
+    }
+
 
     private void updateStats() {
-         DiscordBotListAPI api = new DiscordBotListAPI.Builder().token(Core.getConfig().getToken()).botId(Core.getConfig().getBotID()).build();
+         DiscordBotListAPI api = new DiscordBotListAPI.Builder().token(getConfig().getToken()).botId(getConfig().getBotID()).build();
 
         try {
             //Top.gg
@@ -177,7 +187,7 @@ public class Core extends ListenerAdapter{
             }
 
             String token = "VOID_V3imKsNSyhsDEWoJJTTgRFKL5cYPtrQlWO6aYLuMUTtjdIkG";
-            String botId = Core.getConfig().getBotID();
+            String botId = getConfig().getBotID();
 
             String url = "https://api.voidbots.net/bot/stats/" + botId;
             String jsonData = "{\"server_count\": " + guildsShards + ", \"shard_count\": " + shardManager.getShardsTotal() + "}";
@@ -229,13 +239,7 @@ public class Core extends ListenerAdapter{
     }
 
 
-    public static void initShardManager(ShardManager manager) {
-        shardManager = manager;
-    }
-
-    public static ShardManager getShardManager() {
-        return shardManager;
-    }
+    public ShardManager getShardManager() { return shardManager; }
 
     private void loadIntents() {
         gatewayIntents.addAll(List.of(GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_EMOJIS_AND_STICKERS, GatewayIntent.SCHEDULED_EVENTS));
@@ -418,7 +422,7 @@ public class Core extends ListenerAdapter{
         return guildsMusicChannel;
     }
 
-    public static Config getConfig() {
+    public Config getConfig() {
         return config;
     }
 

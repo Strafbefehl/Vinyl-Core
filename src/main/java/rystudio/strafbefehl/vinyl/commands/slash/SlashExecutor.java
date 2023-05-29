@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SlashExecutor implements IExecutor {
-    ShardManager shardManager = Core.getShardManager();
     public List<OptionData> options = new ArrayList<>();
 
     @Override
@@ -53,20 +52,7 @@ public abstract class SlashExecutor implements IExecutor {
     }
 
     public void execute(EventData event, MySQL mySQL) {
-        if (shardManager != null) {
-            // Iteriere über alle Shards im ShardManager
-            for (JDA shard : shardManager.getShards()) {
-                int shardId = shard.getShardInfo().getShardId();
-                int shardTotal = shardManager.getShardsTotal();
 
-                System.out.println("Shard ID: " + shardId + " / " + shardTotal);
-                System.out.println("Guilds: " + shard.getGuildCache().size());
-                System.out.println("Users: " + shard.getUserCache().size());
-                System.out.println("-------------------------");
-            }
-        } else {
-            System.out.println("ShardManager ist nicht initialisiert.");
-        }
     }
 
 }
