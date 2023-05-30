@@ -4,6 +4,7 @@ public enum ConfigSettings {
 
     TOKEN("token="),
     BOTID("botid="),
+    SHARD("shard="),
     USE_MYSQL("use_mysql="),
     DB_HOST("db_host="),
     DB_PORT("db_port="),

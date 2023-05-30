@@ -27,6 +27,7 @@ public class Config {
         PrintWriter bufferedWriter = new PrintWriter(new FileWriter(this.file));
         bufferedWriter.println(ConfigSettings.TOKEN.label);
         bufferedWriter.println(ConfigSettings.BOTID.label);
+        bufferedWriter.println(ConfigSettings.SHARD.label);
         bufferedWriter.println("# Database Settings");
         bufferedWriter.println(ConfigSettings.USE_MYSQL.label);
         bufferedWriter.println(ConfigSettings.DB_HOST.label);
@@ -59,6 +60,7 @@ public class Config {
                         }
                         break;
                     case BOTID:
+                    case SHARD:
                     case USE_MYSQL:
                     case DB_HOST:
                     case DB_PORT:
@@ -80,6 +82,9 @@ public class Config {
         return settingsValues.get(ConfigSettings.BOTID);
     }
 
+    public String getShardCount() {
+        return settingsValues.get(ConfigSettings.SHARD);
+    }
 
     public boolean getUseMysql() {
         return Boolean.parseBoolean(settingsValues.get(ConfigSettings.USE_MYSQL).isBlank() ? "false" : settingsValues.get(ConfigSettings.USE_MYSQL));
