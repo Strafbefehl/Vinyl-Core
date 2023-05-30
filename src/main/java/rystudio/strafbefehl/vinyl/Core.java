@@ -41,10 +41,10 @@ import java.util.*;
 public class Core extends ListenerAdapter{
 
     public JDA jda;
-
     private boolean running;
-    private DefaultShardManagerBuilder builder;
     private ShardManager shardManager;
+
+    private DefaultShardManagerBuilder builder;
 
     private MySQL mySQL;
 
@@ -62,6 +62,8 @@ public class Core extends ListenerAdapter{
     private final SlashCommands slashCommands;
 
     private final Map<Guild, Channel> guildsMusicChannel = new HashMap<>();
+
+    private List<JDA> jdas = new ArrayList<>();
 
     private Long millisStart;
 
@@ -103,8 +105,6 @@ public class Core extends ListenerAdapter{
             getGatewayIntents().add(GatewayIntent.MESSAGE_CONTENT);
         }
 
-        builder = DefaultShardManagerBuilder.create(token, gatewayIntents);
-        builder.addEventListeners(slashCommands);
     }
 
     public JDA buildJDA() throws InterruptedException {
@@ -112,16 +112,36 @@ public class Core extends ListenerAdapter{
             stopBot();
         }
 
-        builder.setEnabledIntents(gatewayIntents);
-        builder.enableCache(enabledCacheFlags);
-        builder.disableCache(disabledCacheFlags);
+        int shardCount = 2;
 
-        shardManager = builder.build(); // Build the ShardManager instance
-        jda = shardManager.getShardById(0); // Assign the JDA instance
+        for (int i = 0; i < shardCount; i++) {
+            Thread.sleep(5000);
+            DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.create(getConfig().getToken(), gatewayIntents);
+            builder.addEventListeners(slashCommands);
+            builder.setEnabledIntents(gatewayIntents);
+            builder.enableCache(enabledCacheFlags);
+            builder.disableCache(disabledCacheFlags);
 
-        millisStart = System.currentTimeMillis();
+            builder.setShardsTotal(shardCount);
+            builder.setShards(i, shardCount - 1);
 
-        Logger.log(LogType.LISTENERS, jda.getRegisteredListeners().toString());
+            ShardManager shardManager = builder.build(); // Build the ShardManager instance
+            jdas.add(shardManager.getShardById(i)); // Add the JDA instance to the list
+            jdas.get(i).awaitReady().getPresence().setActivity(Activity.listening("Shard: " + String.valueOf(i)));
+
+            jdas.get(i).addEventListener(this);
+
+            Logger.log(LogType.LISTENERS, jdas.get(i).getRegisteredListeners().toString());
+
+
+
+
+
+            if(this.config != null && this.config.getUsePrefixCommands()) {
+                jdas.get(i).addEventListener(prefixCommands);
+            }
+        }
+
 
         if(this.config != null && this.config.getUseMysql()) {
             try {
@@ -131,21 +151,23 @@ public class Core extends ListenerAdapter{
             }
         }
 
-        if(this.config != null && this.config.getUsePrefixCommands()) {
-            this.jda.addEventListener(prefixCommands);
-        }
+        millisStart = System.currentTimeMillis();
 
-        this.jda.addEventListener(slashCommands);
+
+
+
+
+
+
 
         updateCommands();
         logCurrentExecutors();
         Logger.log(LogType.OK, "Core (RyStudio) finished loading in " + ConsoleColors.GREEN_BOLD + (System.currentTimeMillis() - millisStart) + "ms" + ConsoleColors.GREEN + ".");
 
         updateStats();
-        int shardId = jda.getShardInfo().getShardId();
-        jda.awaitReady().getPresence().setActivity(Activity.listening("Shard: " + String.valueOf(shardId)));
 
-        return jda;
+
+        return jdas.get(0);
     }
 
     public void stopBot() {
@@ -164,7 +186,6 @@ public class Core extends ListenerAdapter{
             int guildsShards = 0;
 
 
-            ShardManager shardManager = jda.getShardManager();
             for (JDA shard : shardManager.getShardCache()) {
                 guildsShards += shard.getGuilds().size();
             }
@@ -181,7 +202,6 @@ public class Core extends ListenerAdapter{
             int guildsShards = 0;
 
 
-            ShardManager shardManager = jda.getShardManager();
             for (JDA shard : shardManager.getShardCache()) {
                 guildsShards += shard.getGuilds().size();
             }
@@ -309,20 +329,22 @@ public class Core extends ListenerAdapter{
 
     private void loadMySQLGuilds() throws SQLException {
 
-        if(jda.getGuilds().isEmpty()) {
-            return;
-        }
-
-        PreparedStatement preparedStatement = mySQL.getConnection().prepareStatement("SELECT * FROM guilds");
-        ResultSet rs = preparedStatement.executeQuery();
-        while(rs.next()) {
-            if((rs.getString(1) == null || rs.getString(1).isEmpty()) || (rs.getString(2) == null || rs.getString(2).isEmpty())) {
-                continue;
-            }
-            if(jda.getGuilds().contains(jda.getGuildById(rs.getString(1)))) {
-                Guild guild = jda.getGuildById(rs.getString(1));
-                guildsMusicChannel.put(guild, guild.getTextChannelById(rs.getString(2)));
-            }
+        for (JDA shard : shardManager.getShardCache()) {
+            shard.getGuilds().forEach(guild -> {
+                try {
+                    PreparedStatement preparedStatement = mySQL.getConnection().prepareStatement("SELECT * FROM guilds WHERE guild_id = ?");
+                    preparedStatement.setString(1, guild.getId());
+                    ResultSet rs = preparedStatement.executeQuery();
+                    if(rs.next()) {
+                        if((rs.getString(1) == null || rs.getString(1).isEmpty()) || (rs.getString(2) == null || rs.getString(2).isEmpty())) {
+                            return;
+                        }
+                        guildsMusicChannel.put(guild, guild.getTextChannelById(rs.getString(2)));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
@@ -363,20 +385,25 @@ public class Core extends ListenerAdapter{
      */
     private void logCurrentExecutors() {
 
-        List<Command> commands = jda.retrieveCommands().complete();
-        Logger.log(LogType.EXECUTORS, ConsoleColors.BLUE_BOLD + "- Logging registered Executors");
-        Logger.logNoType(ConsoleColors.BLUE_BOLD + "- [Slash]");
-        for (Command command : commands) {
-            Logger.logNoType("/" + command.getName() + ConsoleColors.RESET + ":" + ConsoleColors.CYAN + command.getId());
+        for (JDA shard : shardManager.getShardCache()) {
+            shard.getGuilds().forEach(guild -> {
+                guild.retrieveCommands().queue(commands -> {
+                    Logger.log(LogType.EXECUTORS, ConsoleColors.BLUE_BOLD + "- Logging registered Executors for guild: " + guild.getName());
+                    Logger.logNoType(ConsoleColors.BLUE_BOLD + "- [Slash]");
+                    for (Command command : commands) {
+                        Logger.logNoType("/" + command.getName() + ConsoleColors.RESET + ":" + ConsoleColors.CYAN + command.getId());
+                    }
+                    Logger.logNoType(ConsoleColors.BLUE_BOLD + "- [Prefix]");
+                    getExecutors().forEach((s, iExecutor) -> {
+                        if(iExecutor instanceof PrefixExecutor) {
+                            if(!iExecutor.getAliases().contains(s)) {
+                                Logger.logNoType(getPrefixCommands().getPrefix() + s);
+                            }
+                        }
+                    });
+                });
+            });
         }
-        Logger.logNoType(ConsoleColors.BLUE_BOLD + "- [Prefix]");
-        getExecutors().forEach((s, iExecutor) -> {
-            if(iExecutor instanceof PrefixExecutor) {
-                if(!iExecutor.getAliases().contains(s)) {
-                    Logger.logNoType(getPrefixCommands().getPrefix() + s);
-                }
-            }
-        });
 
     }
 
@@ -384,6 +411,8 @@ public class Core extends ListenerAdapter{
      * Updates all executors/commands to Discord Guild.
      */
     private void updateCommands() {
+
+
         List<CommandData> commands = new ArrayList<>();
         getExecutors().forEach((name, executor) -> {
             if(executor instanceof SlashExecutor) {
@@ -391,7 +420,10 @@ public class Core extends ListenerAdapter{
                 commands.add(Commands.slash(name, executor1.getDescription()).addOptions(executor1.getOptions()));
             }
         });
-        jda.updateCommands().addCommands(commands).queue();
+
+        for (JDA shard : shardManager.getShardCache()) {
+            shard.updateCommands().addCommands(commands).queue();
+        }
     }
 
     public Core registerListeners(ListenerAdapter... listeners) {
