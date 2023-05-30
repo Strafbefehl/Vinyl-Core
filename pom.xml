@@ -6,7 +6,7 @@
 
     <groupId>rystudio.strafbefehl.vinyl</groupId>
     <artifactId>core</artifactId>
-    <version>1.0.20-RELEASE</version>
+    <version>1.0.38-RELEASE</version>
     <packaging>jar</packaging>
     <name>Vinyl-Core</name>
 
@@ -56,6 +56,11 @@
             <groupId>org.discordbots</groupId>
             <artifactId>DBL-Java-Library</artifactId>
             <version>2.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>discord-webhooks</artifactId>
+            <version>0.8.2</version>
         </dependency>
     </dependencies>
 
