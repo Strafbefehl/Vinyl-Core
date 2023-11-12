@@ -1,0 +1,29 @@
+name: Deploy to GitHub Packages
+
+on:
+  push:
+    branches:
+      - unstable
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Build and deploy to GitHub Packages
+        run: |
+          mvn -B deploy --file pom.xml \
+            -Dmaven.repo.local=$HOME/.m2/repository \
+            -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/Strafbefehl/Vinyl-Core
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
