@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - unstable
+      - master
 
 jobs:
   deploy:
