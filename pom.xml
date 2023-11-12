@@ -6,7 +6,7 @@
 
     <groupId>rystudio.strafbefehl.vinyl</groupId>
     <artifactId>coreunstable</artifactId>
-    <version>1.0.40-UNSTABLE-R1</version>
+    <version>1.0.40-UNSTABLE-R6</version>
     <packaging>jar</packaging>
     <name>Vinyl-Core</name>
 
