@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.sharding.DefaultShardManager;
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -44,7 +45,7 @@ public class Core extends ListenerAdapter {
 
     public JDA jda;
     private boolean running;
-    private ShardManager shardManager;
+    private DefaultShardManager shardManager;
 
     private DefaultShardManagerBuilder builder;
 
@@ -433,7 +434,7 @@ public class Core extends ListenerAdapter {
             return this;
         } else {
             if (this.shardManager == null) {
-                this.shardManager = DefaultShardManagerBuilder.createDefault(this.config.getToken()).build();
+                this.shardManager = (DefaultShardManager) DefaultShardManagerBuilder.createDefault(this.config.getToken()).build();
                 // Configure any other settings for the shardManager if needed
             }
 
